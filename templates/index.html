@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #cfe8a9; /* Pista green background */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        #image-container {
+            margin: 20px 0;
+        }
+
+        #image-container img {
+            max-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #input-container {
+            margin: 20px 0;
+        }
+
+        textarea {
+            width: 350px; /* Increased width */
+            height: 120px; /* Increased height */
+            padding: 15px; /* Enhanced padding */
+            font-size: 1em; /* Enhanced font size */
+            border: 3px solid #333; /* Bold boundary */
+            border-radius: 8px; /* Softer corners */
+            background-color: #f8f8f8; /* Off-white background */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            resize: none;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Sentiment Analysis</h1>
+
+    <div id="image-container">
+        <img src="https://i.ytimg.com/vi/99ndyGYodSk/maxresdefault.jpg" alt="Sentiment Analysis Image">
+    </div>
+
+    <div id="input-container">
+        <textarea id="text-input" placeholder="Enter your text here..."></textarea><br>
+        <button onclick="analyzeSentiment()">Analyze Sentiment</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        function analyzeSentiment() {
+            const inputText = document.getElementById('text-input').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = '';  // Clear previous results
+
+            if (!inputText) {
+                resultDiv.innerText = 'Please enter some text.';
+                return;
+            }
+
+            // Send AJAX request to Flask backend
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: inputText }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    resultDiv.innerText = 'Error: ' + data.error;
+                } else {
+                    resultDiv.innerText = data.result;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerText = 'An error occurred. Please try again.';
+            });
+        }
+    </script>
+</body>
+</html>
